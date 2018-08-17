@@ -22,11 +22,11 @@ stages{
         }
         stage('Deploy to production'){
             steps{
-                timeout(time:5, unit:'Days'){
-                    input message: 'Approve PRODUCTION Deployment'
+                timeout(time:5, unit:'DAYS'){
+                    input message:'Approve PRODUCTION Deployment?'
                 }
 
-                build-job: 'deploy-to-production'
+                build job: 'Deploy-to-Prod'
             }
             post{
                 success{
