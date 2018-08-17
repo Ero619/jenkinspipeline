@@ -1,8 +1,15 @@
 pipeline {
     agent any
-    tools{
-        maven 'localMaven'
+
+    parameters {
+         string(name: 'tomcat_dev', defaultValue: '318.191.169.88', description: 'Staging Server')
+         string(name: 'tomcat_prod', defaultValue: '18.191.20.186', description: 'Production Server')
     }
+
+    triggers {
+         pollSCM('* * * * *')
+     }
+
 stages{
         stage('Build'){
             steps {
@@ -15,25 +22,19 @@ stages{
                 }
             }
         }
-        stage('Deploy to staging'){
-            steps{
-                build job: 'deploy-to-staging'
-            }
-        }
-        stage('Deploy to production'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
+
+        stage ('Deployments'){
+            parallel{
+                stage ('Deploy to Staging'){
+                    steps {
+                        sh "scp -i Downloads/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                    }
                 }
 
-                build job: 'deploy-to-production'
-            }
-            post{
-                success{
-                    echo 'Code deployed to production'
-                }
-                failure{
-                    echo 'Code NOT deployed to production'
+                stage ("Deploy to Production"){
+                    steps {
+                        sh "scp -i Downlaods/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                    }
                 }
             }
         }
