@@ -6,7 +6,10 @@ pipeline {
     parameters {
          string(name: 'tomcat_dev', defaultValue: '18.191.169.88', description: 'Staging Server')
          string(name: 'tomcat_prod', defaultValue: '18.191.20.186', description: 'Production Server')
-         string(name: 'tomcat_cert', defaultValue: '/Users/gussanchez/Downloads/tomcat-demo.pem')
+    }
+
+    environment {
+        tomcat_cert= '/Users/gussanchez/Downloads/tomcat-demo.pem'
     }
 
     triggers {
