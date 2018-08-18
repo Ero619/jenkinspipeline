@@ -20,6 +20,8 @@ stages{
         stage('Build'){
             steps {
                 sh 'mvn clean package'
+                echo 'My user is: '
+                sh 'whoami'
             }
             post {
                 success {
